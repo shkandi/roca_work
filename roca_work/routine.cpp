@@ -31,6 +31,7 @@ char tnx(char tn, char ret, char pnum, char *pstr); // Вывод текста и выход
 char pnum(void *num, char var_tp, char flags, char raz); // Вывод числа
 void log_text(char text); // Заголовок протокола
 int sf_print(unsigned char *oper_b); // Печать расшифровки одной записи в файл
+int pf_print(unsigned char *oper_b); // Печать расшифровки параметра в файл
 int se_print(unsigned char *oper_b, int *num, char bin_flag); // Печать расшифровки одной записи на экран
 
 
@@ -38,7 +39,8 @@ int se_print(unsigned char *oper_b, int *num, char bin_flag); // Печать расшифро
 // Сама программа
 int routine(_ws *str){
 	
-	int i, a;
+	int i, a, s;
+	int pack;
 	int res;
 	char count;
 	char rc_oper; 
@@ -122,16 +124,19 @@ int routine(_ws *str){
 		printf("adr:");
 		pnum((void*)&str->adr, PNUM_VAR_SHORT, PNUM_FLAG_HEX, 4);
 		printf(" bytes:%d method:", str->numb);
-			if (str->cmd == STATE_UART_WRITE)
+			if (str->cmd == ROCA_CODE_WRITE)
 				printf("Over");
-			else if (str->cmd == STATE_UART_AND)
+			else if (str->cmd == ROCA_CODE_AND)
 				printf("AND");
-			else if (str->cmd == STATE_UART_OR)
+			else if (str->cmd == ROCA_CODE_OR)
 				printf("OR");
 		
 		printf("\n");
 		printf("Data to write: ");
-		res = pnum((void*)&str->data, PNUM_VAR_CHAR, PNUM_FLAG_HEX, 2);
+		
+		for (i = 0; i < str->numb; i++)
+			res = pnum((void*)&str->data[i], PNUM_VAR_CHAR, PNUM_FLAG_HEX | PNUM_FLAG_SPACE, 2);
+				
 		printf("\n");
 		
 		// Заполняем массив
@@ -206,8 +211,39 @@ int routine(_ws *str){
 			return tnx(TNX_ERR_OCC, ROUT_EXIT, ROCA_WORK_ERR_FILEOPEN, 0);
 		
 		log_text(FTEXT_LOG_HEADER);  // Записываем заголовок протокола
+
+		// Печатаем лист параметров
+		entries = 21; // Выставляем количество обращений
+		read_adr = ROCA_ADR_SHO; // Выставляем начальный адрес
+		str->numb = 10; // Вставляем количество байт
 		
-		entries = 64; // Выставляем количество записей
+		for (a = 0; a < entries; a++){
+			
+			// Заполняем массив
+			ubuf[0] = 6;
+			ubuf[1] = 0;
+			ubuf[2] = ROCA_CODE_READ;
+			ubuf[3] = str->numb;
+			*(short*)(ubuf + 4) = read_adr;
+			
+			// Получачем байты
+			if (res = rcl_uart(str->com, ubuf)){
+				fprintf(fp, "\nLibrary error: %x!\n", res); // Если ошибка, то запись в файле
+				fclose(fp); // Закрываем файл
+				return tnx(TNX_LIB_ERR, ROUT_EXIT, res, 0); // И выходим
+			}
+			// Счетчик полученных записей
+			printf("Entries receicved: %d/%d\r", a + 1, entries);
+			read_adr += str->numb;	// Добавляем количество байт к адресу
+
+			pf_print((unsigned char*)&(ubuf[6]));  // Печатаем расшифровку записи в файл
+
+		}
+
+		/*
+		log_text(FTEXT_LOG_START);  // Записываем начало протокола
+		
+		entries = MAX_LOG_ENTRIES; // Выставляем количество записей
 		read_adr = ROCA_ADR_LOG; // Выставляем начальный адрес
 		str->numb = 16;
 		
@@ -236,6 +272,8 @@ int routine(_ws *str){
 		}
 		
 		log_text(FTEXT_LOG_END);  // Записываем окончание протокола
+		*/
+		
 		fclose(fp); // Закрываем файл
 		printf("\n");
 		printf("Log received and saved to %s\n", file_name);

@@ -29,18 +29,22 @@
 
 // Разеные значения
 #define MAX_BYTE_NUMBER 16 // Максимальное количество байт
+#define MAX_LOG_ENTRIES 32 // Максимальное значение записей в логе
 
 
 // Адреса
 #define ROCA_ADR_ID 0x0000
+#define ROCA_ADR_SHO 0x002e
 #define ROCA_ADR_LOG 0x1000
+
 
 // Значения
 #define ROCA_DATA_ID 0xca
 
 // Текст для лога
 #define FTEXT_LOG_HEADER 1 // Текст заголовка
-#define FTEXT_LOG_END 2 // Текст окончания
+#define FTEXT_LOG_START 2 // Текст окончания
+#define FTEXT_LOG_END 3 // Текст окончания
 
 // Номер текста для функции выхода
 #define TNX_PRM_ERR 1 // Текст ошибки параметра

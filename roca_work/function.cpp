@@ -15,6 +15,9 @@ extern time_t timer, timer_n;
 // Переменные для файла
 extern FILE *fp;
 
+// Переменная для счетчика
+int mar_count;
+char ar_marker[21] = {4, 4, 2, 2, 4, 4, 2, 2, 4, 4, 2, 2, 3, 1, 1, 3, 1, 1, 3, 1, 1};
 
 
 // Функция сравнения буферов
@@ -86,11 +89,14 @@ void log_text(char text){
 	if (text == FTEXT_LOG_HEADER){
 		timer = time(NULL); // Берем системное время
 		ptm = localtime(&timer); // Заполняем структуру времени
-		fprintf(fp, "\n");
-		fprintf(fp, "Log file of mobile platform events.\n");
+		//fprintf(fp, "\n");
+		//fprintf(fp, "Log file of mobile platform events.\n");
+		fprintf(fp, "Protocol file.\n");
 		fprintf(fp, "Date: %d.%d.%d Time: %d:%d:%d\n", ptm->tm_mday, ptm->tm_mon, ptm->tm_year - 100, ptm->tm_hour, ptm->tm_min, ptm->tm_sec);
-		fprintf(fp, "//////// START OF ROCA LOG ////////\n");
+		fprintf(fp,"\n");
 	}
+	else if (text == FTEXT_LOG_START)
+		fprintf(fp, "//////// START OF ROCA LOG ////////\n");
 	else if (text == FTEXT_LOG_END){
 		fprintf(fp, "///////// END OF ROCA LOG /////////\n");
 	}
@@ -167,6 +173,189 @@ int sf_print(unsigned char *oper_b){
 	return 0;
 }
 
+
+
+// Печать расшифровки параметра в файл
+int pf_print(unsigned char *oper_b){
+	
+	int f;
+	int r_strok;
+	char p_flag;
+	int simb;
+	int pv; // Переменная для степени
+	unsigned char nibble; // Для половины байта
+	
+	mar_count++;
+	
+	// Пишем номер записи
+	fprintf(fp,"Marker: ");
+	r_strok = mar_count;
+	for (f = 0; f < 2; f++){
+		pv = (int)pow((double)10, (double)f);
+		fprintf(fp,"%d", r_strok/(10/pv));
+		r_strok = r_strok % (10/pv);
+	}	
+	
+	fprintf(fp," | ");
+	
+	if (ar_marker[mar_count - 1] == 1)
+		fprintf(fp,"AKS");
+	else if (ar_marker[mar_count - 1] == 2)
+		fprintf(fp,"MKS");
+	else if (ar_marker[mar_count - 1] == 3)
+		fprintf(fp,"AES");
+	else if (ar_marker[mar_count - 1] == 4)
+		fprintf(fp,"BES");
+	
+	fprintf(fp," | ");
+
+	// Ошибки
+	/*
+	fprintf(fp,"Err: ");
+	r_strok = *oper_b;
+	p_flag = FLAG_DOWN;
+	for (f = 0; f < 3; f++){
+		pv = (int)pow((double)10, (double)f);
+		simb = r_strok/(100/pv);
+		
+		if (simb)
+			p_flag = FLAG_RISE;	
+		
+		if (p_flag)
+			fprintf(fp,"%d", simb);
+		else {
+			if (f == 2)
+				fprintf(fp,"0");
+			else
+				fprintf(fp," ");	
+		}
+		r_strok = r_strok % (100/pv);
+	}	
+	fprintf(fp," | ");
+	*/
+		
+	// Счетчик
+	fprintf(fp,"Counter: ");
+	r_strok = *(oper_b + 1);
+	r_strok <<= 8;
+	r_strok |= *(oper_b + 2);
+	r_strok <<= 8;
+	r_strok |= *(oper_b + 3);
+	p_flag = FLAG_DOWN;
+	for (f = 0; f < 8; f++){
+		pv = (int)pow((double)10, (double)f);
+		simb = r_strok/(10000000/pv);
+
+		if (simb)
+			p_flag = FLAG_RISE;	
+		
+		if (p_flag)
+			fprintf(fp,"%d", simb);
+		else {
+			if (f == 7)
+				fprintf(fp,"0");
+			else
+				fprintf(fp," ");	
+		}		
+		r_strok = r_strok % (10000000/pv);
+	}	
+	fprintf(fp," | ");
+
+	// Среднее
+	fprintf(fp,"Middle: ");
+	r_strok = *(oper_b + 5);
+	r_strok <<= 8;
+	r_strok |= *(oper_b + 4);
+	p_flag = FLAG_DOWN;
+	for (f = 0; f < 5; f++){
+		if (f == 3)
+			fprintf(fp,",");
+
+		pv = (int)pow((double)10, (double)f);
+		simb = r_strok/(10000/pv);
+		
+		if (simb)
+			p_flag = FLAG_RISE;	
+		
+		if (p_flag)
+			fprintf(fp,"%d", simb);
+		else {
+			if (f > 1)
+				fprintf(fp,"0");
+			else
+				fprintf(fp," ");	
+		}
+		r_strok = r_strok % (10000/pv);
+	}	
+	fprintf(fp," ");
+	fprintf(fp,"ms");
+	fprintf(fp," | ");
+
+	
+	// Максимальное
+	fprintf(fp,"Max: ");
+	r_strok = *(oper_b + 7);
+	r_strok <<= 8;
+	r_strok |= *(oper_b + 6);
+	p_flag = FLAG_DOWN;
+	for (f = 0; f < 5; f++){
+		if (f == 3)
+			fprintf(fp,",");
+
+		pv = (int)pow((double)10, (double)f);
+		simb = r_strok/(10000/pv);
+		
+		if (simb)
+			p_flag = FLAG_RISE;	
+		
+		if (p_flag)
+			fprintf(fp,"%d", simb);
+		else {
+			if (f > 1)
+				fprintf(fp,"0");
+			else
+				fprintf(fp," ");	
+		}
+		r_strok = r_strok % (10000/pv);
+	}	
+	fprintf(fp," ");
+	fprintf(fp,"ms");
+	fprintf(fp," | ");
+	
+	// Минимальное
+	fprintf(fp,"Min: ");
+	r_strok = *(oper_b + 9);
+	r_strok <<= 8;
+	r_strok |= *(oper_b + 8);
+	p_flag = FLAG_DOWN;
+	for (f = 0; f < 5; f++){
+		if (f == 3)
+			fprintf(fp,",");
+
+		pv = (int)pow((double)10, (double)f);
+		simb = r_strok/(10000/pv);
+		
+		if (simb)
+			p_flag = FLAG_RISE;	
+		
+		if (p_flag)
+			fprintf(fp,"%d", simb);
+		else {
+			if (f > 1)
+				fprintf(fp,"0");
+			else
+				fprintf(fp," ");	
+		}
+		r_strok = r_strok % (10000/pv);
+	}	
+	fprintf(fp," ");
+	fprintf(fp,"ms");
+
+
+
+	fprintf(fp,"\n");	
+	return 0;
+}
 
 
 // Функция вывода вступительного текста

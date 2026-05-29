@@ -33,7 +33,7 @@ int main(int argc, char *argv[]){
 
 	while(routine(p_ws)); // Сама программа
 	
-	printf("Press any key to exit\n");
-	getch();
+	//printf("Press any key to exit\n");
+	//getch();
 	return 0;
 }

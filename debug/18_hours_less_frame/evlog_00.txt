@@ -1,0 +1,24 @@
+Protocol file.
+Date: 21.4.26 Time: 11:1:33
+
+Marker: 01 | BES | Counter:    57763 | Middle: 245,20 ms | Max: 349,94 ms | Min: 150,01 ms
+Marker: 02 | BES | Counter:    57779 | Middle: 248,10 ms | Max: 349,99 ms | Min: 150,02 ms
+Marker: 03 | MKS | Counter:    55945 | Middle: 232,68 ms | Max: 349,99 ms | Min: 150,01 ms
+Marker: 04 | MKS | Counter:    55300 | Middle: 230,67 ms | Max: 349,97 ms | Min: 150,01 ms
+Marker: 05 | BES | Counter:    57791 | Middle: 245,60 ms | Max: 349,98 ms | Min: 150,01 ms
+Marker: 06 | BES | Counter:    57916 | Middle: 248,49 ms | Max: 349,97 ms | Min: 150,01 ms
+Marker: 07 | MKS | Counter:    57536 | Middle: 238,86 ms | Max: 349,97 ms | Min: 150,01 ms
+Marker: 08 | MKS | Counter:    56370 | Middle: 234,04 ms | Max: 349,90 ms | Min: 150,01 ms
+Marker: 09 | BES | Counter:    58094 | Middle: 249,73 ms | Max: 349,99 ms | Min: 150,01 ms
+Marker: 10 | BES | Counter:    57965 | Middle: 249,80 ms | Max: 349,99 ms | Min: 150,02 ms
+Marker: 11 | MKS | Counter:    55623 | Middle: 231,68 ms | Max: 349,87 ms | Min: 150,01 ms
+Marker: 12 | MKS | Counter:    57976 | Middle: 241,25 ms | Max: 349,97 ms | Min: 150,01 ms
+Marker: 13 | AES | Counter:    58760 | Middle: 228,71 ms | Max: 348,10 ms | Min: 150,01 ms
+Marker: 14 | AKS | Counter:    52026 | Middle: 213,56 ms | Max: 349,99 ms | Min: 150,01 ms
+Marker: 15 | AKS | Counter:    51292 | Middle: 213,66 ms | Max: 349,31 ms | Min: 150,01 ms
+Marker: 16 | AES | Counter:    59742 | Middle: 232,00 ms | Max: 349,09 ms | Min: 150,01 ms
+Marker: 17 | AKS | Counter:    54465 | Middle: 217,49 ms | Max: 349,93 ms | Min: 150,01 ms
+Marker: 18 | AKS | Counter:    55294 | Middle: 217,80 ms | Max: 348,90 ms | Min: 150,01 ms
+Marker: 19 | AES | Counter:    60554 | Middle: 233,78 ms | Max: 349,80 ms | Min: 150,03 ms
+Marker: 20 | AKS | Counter:    55914 | Middle: 218,10 ms | Max: 349,93 ms | Min: 150,02 ms
+Marker: 21 | AKS | Counter:    56477 | Middle: 221,21 ms | Max: 349,89 ms | Min: 150,01 ms

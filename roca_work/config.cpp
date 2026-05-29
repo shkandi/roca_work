@@ -173,13 +173,13 @@ int str_conf(_ws *str, int n_param, char *param[]){
 				hs_buf[f] = param[i][f + 4]; 
 			str->adr = strtol(hs_buf, 0, 16); // Преобразовываем символы в значение адреса
 
-			if (param[i][8] != 'd') // Проверяем что после значения адреса стоит d 
+			if (param[i][8] != '.') // Проверяем что после значения адреса стоит . 
 				return tnx(TNX_PRM_ERR, CONFIG_ERR, 0, param[i]);
 			
-			// Проверяем сколько еще d
+			// Проверяем сколько еще .
 			nd = 1;
 			for (f = 0; f < 15; f++){
-				if (param[i][11 + f * 3] != 'd')
+				if (param[i][11 + f * 3] != '.')
 					break;
 				else
 					nd++;
